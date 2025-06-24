@@ -2,31 +2,143 @@
 <html>
 <head>
   <title>VirusTotal Report</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='report.css') }}">
+  <!-- Link to Bootstrap for styling -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    /* Add some padding to the body for better spacing */
+    body {
+        padding: 2rem;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Styles for the theme toggle button */
+    .theme-toggle-btn {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background-color: #343a40;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 1000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        outline: none;
+        transition: background-color 0.3s ease;
+    }
+    .theme-toggle-btn:hover {
+        background-color: #495057;
+    }
+
+    /* Dark Mode Styles */
+    body.dark-mode {
+        background-color: #1e1e1e;
+        color: #e0e0e0;
+    }
+    body.dark-mode .table {
+        color: #e0e0e0;
+        background-color: #2d2d2d;
+    }
+    body.dark-mode .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+    body.dark-mode .table-bordered,
+    body.dark-mode .table-bordered td,
+    body.dark-mode .table-bordered th {
+        border-color: #4a5568;
+    }
+    body.dark-mode .thead-dark th {
+        background-color: #38761d; /* A darker green for contrast */
+        border-color: #4a5568;
+    }
+    body.dark-mode .alert-warning {
+        background-color: #4d3c0c;
+        color: #ffeeba;
+        border-color: #5d4a1a;
+    }
+  </style>
 </head>
 <body>
-  <h2>VirusTotal Analysis Report</h2>
-  {% if report.data.attributes %}
-    <p>Status: <strong>{{ report.data.attributes.status }}</strong></p>
-    <p>Scan Results:</p>
-    <table>
-      <thead>
-        <tr>
-          <th>Engine</th>
-          <th>Result</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for engine, result in report.data.attributes.results.items() %}
+  
+  <!-- Theme Toggle Button -->
+  <button id="theme-toggle" class="theme-toggle-btn">🌓</button>
+
+  <div class="container">
+    <h2 class="mb-4">VirusTotal Analysis Report</h2>
+    
+    {% if report.data and report.data.attributes %}
+      <p>Status: <strong>{{ report.data.attributes.status }}</strong></p>
+      
+      <!-- Added Bootstrap classes to the table for styling -->
+      <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
           <tr>
-            <td>{{ engine }}</td>
-            <td>{{ result.result or "Clean" }}</td>
+            <th>Engine</th>
+            <th>Result</th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  {% else %}
-    <p>No detailed results found.</p>
-  {% endif %}
+        </thead>
+        <tbody>
+          {% for engine, result in report.data.attributes.results.items() %}
+            <tr>
+              <td>{{ engine }}</td>
+              <td>{{ result.result or "Clean" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+    {% else %}
+      <div class="alert alert-warning">
+        <p>No detailed results found.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- JavaScript for Toggle Functionality -->
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+  <script>
+    $(document).ready(function() {
+        const themeToggleBtn = $('#theme-toggle');
+        const bodyElement = $('body');
+
+        // Function to apply the theme
+        function applyTheme(theme) {
+            if (theme === 'dark-mode') {
+                bodyElement.addClass('dark-mode');
+                themeToggleBtn.text('☀️'); // Sun icon
+            } else {
+                bodyElement.removeClass('dark-mode');
+                themeToggleBtn.text('🌓'); // Moon icon
+            }
+        }
+
+        // Check for saved theme in localStorage
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        } else {
+            // Default to light mode if no theme is saved
+            applyTheme('light-mode');
+        }
+
+        // Event listener for the toggle button
+        themeToggleBtn.on('click', function() {
+            let newTheme;
+            if (bodyElement.hasClass('dark-mode')) {
+                newTheme = 'light-mode';
+            } else {
+                newTheme = 'dark-mode';
+            }
+            applyTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+    });
+  </script>
+
 </body>
 </html>
