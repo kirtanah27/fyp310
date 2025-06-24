@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Custom styles for the privacy policy page */
+        body {
+            background-color: #f8f9fa; /* Light grey background */
+        }
+        .privacy-container {
+            background-color: #ffffff; /* White container background */
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        .privacy-container h2 {
+            color: #343a40;
+            margin-bottom: 1.5rem;
+        }
+        .privacy-container h3 {
+            color: #495057;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 0.5rem;
+        }
+        .privacy-container p, .privacy-container li {
+            color: #6c757d;
+            line-height: 1.6;
+        }
+        .back-button-container {
+            text-align: center;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="privacy-container">
+            <h2 class="text-center">Privacy Policy</h2>
+            <p class="text-center text-muted">Last updated: June 17, 2025</p>
+
+            <p>
+                This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of your information when you use our service. We use Your Personal data to provide and improve the Service. By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy.
+            </p>
+
+            <h3>Information We Collect</h3>
+            <p>
+                We collect information that you provide directly to us when you use our services. This includes:
+            </p>
+            <ul>
+                <li><strong>Email Credentials:</strong> When you use the "Scan Email" feature, we ask for your Gmail address and an app-specific password. This information is used solely to access your inbox for the purpose of scanning emails and is not stored permanently on our servers after the session ends.</li>
+                <li><strong>Uploaded Files:</strong> When you upload an <code>.eml</code> file, the file is temporarily stored on our server to be processed and scanned by VirusTotal.</li>
+                <li><strong>Scan Reports:</strong> Information related to the scan, such as the filename and the VirusTotal scan ID, is stored in our database to allow you to view the results later.</li>
+            </ul>
+
+            <h3>How We Use Your Information</h3>
+            <p>
+                The information we collect is used for the following purposes:
+            </p>
+            <ul>
+                <li>To provide, operate, and maintain our services.</li>
+                <li>To submit your files and emails to the VirusTotal API for threat analysis.</li>
+                <li>To display email headers and threat reports to you.</li>
+                <li>To allow you to manage your uploaded files.</li>
+            </ul>
+            
+            <h3>Third-Party Services</h3>
+            <p>
+                Our service relies on the following third-party service:
+            </p>
+            <ul>
+                <li><strong>VirusTotal:</strong> We send the files you upload and the emails you scan to the VirusTotal API for analysis. We are not responsible for the privacy practices of VirusTotal. We recommend you review their privacy policy.</li>
+            </ul>
+
+            <h3>Data Storage and Security</h3>
+            <p>
+                We take the security of your data seriously. File metadata and scan IDs are stored in a MongoDB database. Uploaded files and fetched emails are stored on the server's file system. You have the ability to delete your files from our system at any time through the "View Uploaded Files" page.
+            </p>
+
+            <h3>Your Rights</h3>
+            <p>
+                You have the right to delete your data from our service. The "Delete" and "Delete Selected" features on the "View Uploaded Files" page will permanently remove the files from our server and the corresponding records from our database.
+            </p>
+            
+            <h3>Changes to This Privacy Policy</h3>
+            <p>
+                We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.
+            </p>
+            
+            <div class="back-button-container">
+                <a href="/" class="btn btn-primary">Back to Main Page</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

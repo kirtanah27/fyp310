@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan Results</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body style="background-color: #f4f4f4; padding-top: 20px;">
+    <div class="container">
+        <h2 class="text-center mb-4">Scan Results</h2>
+        
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">EML Header Details</div>
+            <div class="card-body">
+                <p><strong>From:</strong> {{ file_data['headers']['From'] }}</p>
+                <p><strong>To:</strong> {{ file_data['headers']['To'] }}</p>
+                <p><strong>Subject:</strong> {{ file_data['headers']['Subject'] }}</p>
+                <p><strong>Date:</strong> {{ file_data['headers']['Date'] }}</p>
+                <p><strong>Message-ID:</strong> {{ file_data['headers']['Message-ID'] }}</p>
+                <p><strong>Content-Type:</strong> {{ file_data['headers']['Content-Type'] }}</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-success text-white">VirusTotal Scan Result</div>
+            <div class="card-body">
+                <p><strong>File:</strong> {{ report['data']['attributes']['file_info']['filename'] }}</p>
+                <p><strong>Scan Status:</strong> {{ report['data']['attributes']['status'] }}</p>
+                <p><strong>Scan Date:</strong> {{ report['data']['attributes']['date'] }}</p>
+                <h5>Verdict:</h5>
+                <ul>
+                    {% for engine in report['data']['attributes']['last_analysis_results'] %}
+                        <li><strong>{{ engine }}:</strong> {{ report['data']['attributes']['last_analysis_results'][engine]['category'] }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <a href="/" class="btn btn-primary mt-4">Back to Home</a>
+    </div>
+</body>
+</html>

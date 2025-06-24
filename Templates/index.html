@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+</head>
+
+<body>
+    <button id="theme-toggle" class="theme-toggle-btn">🌓</button>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <button class="btn btn-primary custom-position" type="button" onclick="toggleMenu()">Help</button>
+            </div>
+        </div>
+
+        <div id="sideMenu" class="side-collapse">
+            <span class="close-btn" onclick="toggleMenu()">&times;</span>
+            <a href="#" class="text-white d-block" data-toggle="modal" data-target="#exampleModal" data-title="How to Scan Email"
+               data-content='<div class="row justify-content-center"><div class="col-md-10"><div class="embed-responsive embed-responsive-16by9"><video id="scanEmailVideo" class="embed-responsive-item" controls preload="metadata"><source src="{{ url_for("static", filename="videos/video guideline.mp4") }}" type="video/mp4">Your browser does not support the video tag.</video></div></div></div>'>How to Scan Email</a>
+            <a href="#" class="text-white d-block" data-toggle="modal" data-target="#exampleModal" data-title="How to Upload Email"
+               data-content='<div class="row justify-content-center"><div class="col-md-10"><div class="embed-responsive embed-responsive-16by9"><video id="uploadEmailVideo" class="embed-responsive-item" controls preload="metadata"><source src="{{ url_for("static", filename="videos/video guideline.mp4") }}" type="video/mp4">Your browser does not support the video tag.</video></div></div></div>'>How to Upload Email</a>
+            <a href="#" class="text-white d-block" data-toggle="modal" data-target="#exampleModal" data-title="Forensic Log Guide"
+               data-content='<div class="row justify-content-center"><div class="col-md-10"><div class="embed-responsive embed-responsive-16by9"><video id="forensicLogVideo" class="embed-responsive-item" controls preload="metadata"><source src="{{ url_for("static", filename="videos/video guideline.mp4") }}" type="video/mp4">Your browser does not support the video tag.</video></div></div></div>'>Forensic Log Guide</a>
+            <a href="#" class="text-white d-block" data-toggle="modal" data-target="#exampleModal" data-title="How to Get App Password"
+               data-content='<div class="row justify-content-center"><div class="col-md-10"><div class="embed-responsive embed-responsive-16by9"><video id="appPasswordVideo" class="embed-responsive-item" controls preload="metadata"><source src="{{ url_for("static", filename="videos/video guideline.mp4") }}" type="video/mp4">Your browser does not support the video tag.</video></div></div></div>'>How to Get App Password</a>
+        </div>
+
+        <div class="jumbotron text-center">
+            <img class="img-fluid mx-auto d-block" src="{{ url_for('static', filename='logo.png') }}" alt="Logo">
+        </div>
+
+        <div class="d-flex justify-content-center custom-button-position flex-wrap">
+            <a href="#" class="btn btn-green mx-2 mb-2" role="button" data-toggle="modal" data-target="#loginModal">Scan Email</a>
+            <label class="btn btn-danger mx-2 mb-2">
+                Upload Email
+                <input type="file" id="uploadEmail" hidden accept=".eml">
+            </label>
+            <a href="/files" class="btn btn-secondary mx-2 mb-2">
+                <i class="fas fa-folder-open"></i> View Uploaded Files
+            </a>
+        </div>
+    </div>
+
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Gmail Login</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="gmailLoginForm">
+                        <div class="form-group">
+                            <label>Gmail Address</label>
+                            <input type="email" class="form-control" id="gmailAddress" required>
+                        </div>
+                        <div class="form-group">
+                            <label>App Password</label>
+                            <input type="password" class="form-control" id="gmailPassword" required>
+                            <small class="text-muted">
+                                <a href="https://myaccount.google.com/apppasswords" target="_blank">Create App Password</a>
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label>Start Date</label>
+                            <input type="date" class="form-control" id="startDate" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="loginSubmit">Scan Email</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="uploadModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Uploading & Scanning Email...</h5>
+                </div>
+                <div class="modal-body text-center">
+                    <p id="uploadStatus">Preparing to scan your email...</p>
+                    <div class="progress mt-3">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" id="uploadProgress" role="progressbar" style="width: 10%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="resultModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl custom-modal-size">
+            <div class="modal-content custom-modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="resultModalLabel">Scan Status</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body"></div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered custom-modal-size">
+            <div class="modal-content custom-modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    </div>
+                <div class="modal-footer"><button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-light pt-5 pb-3 mt-3">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-5 mb-4">
+                    <h6 class="text-uppercase font-weight-bold">About Our Service</h6>
+                    <p>
+                        Our service provides advanced scanning capabilities to detect phishing threats in your emails. We prioritize your security by leveraging powerful tools to analyze email content and attachments.
+                    </p>
+                </div>
+                <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-4">
+                    <h6 class="text-uppercase font-weight-bold">Quick Links</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="/" class="text-light">Home</a></li>
+                        <li><a href="/files" class="text-light">View Uploaded Files</a></li>
+                        <li><a href="#" class="text-light" data-toggle="modal" data-target="#loginModal">Scan Email</a></li>
+                        <li><a href="https://myaccount.google.com/apppasswords" class="text-light" target="_blank">Get App Password</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+                    <h6 class="text-uppercase font-weight-bold">Support</h6>
+                    <ul class="list-unstyled">
+                        <!-- Updated Contact Us link -->
+                        <li><a href="https://wa.me/60123456789?text=Hello,%20I%20need%20help%20with%20the%20Anti-Phishing%20service." class="text-light" target="_blank">Contact Us</a></li>
+                        <li><a href="/report" class="text-light">Report a Problem</a></li>
+                        <li><a href="/privacy" class="text-light">Privacy Policy</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12 text-center border-top border-secondary pt-1">
+                    <p>Copyright &copy; 2025 All Rights Reserved by <a href="#" class="text-light font-weight-bold">Kirtanah Manalan</a>.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+
+         $(document).ready(function() {
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const currentTheme = localStorage.getItem('theme');
+
+            function applyTheme(theme) {
+                if (theme === 'dark-mode') {
+                    document.body.classList.add('dark-mode');
+                    themeToggleBtn.textContent = '☀️'; // Sun icon for light mode
+                } else {
+                    document.body.classList.remove('dark-mode');
+                    themeToggleBtn.textContent = '🌓'; // Moon icon for dark mode
+                }
+            }
+
+            if (currentTheme) {
+                applyTheme(currentTheme);
+            } else {
+                applyTheme('light-mode'); // Default to light mode
+            }
+
+            themeToggleBtn.addEventListener('click', function() {
+                let newTheme;
+                if (document.body.classList.contains('dark-mode')) {
+                    newTheme = 'light-mode';
+                } else {
+                    newTheme = 'dark-mode';
+                }
+                applyTheme(newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+        });
+        /* END: Theme Toggle JavaScript */
+        function toggleMenu() {
+            document.getElementById("sideMenu").classList.toggle("show");
+        }
+
+        $('#exampleModal').on('show.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const modal = $(this);
+            modal.find('.modal-title').text(button.data('title'));
+            // Use .html() to correctly render HTML from data-content
+            modal.find('.modal-body').html(button.data('content'));
+
+            // Find all video elements in the modal and play them
+            modal.find('video').each(function() {
+                this.play();
+            });
+        });
+
+        // Add this event listener to pause the video when the modal is hidden
+        $('#exampleModal').on('hide.bs.modal', function(event) {
+            const modal = $(this);
+            // Pause any video that might be playing in the modal
+            modal.find('video').each(function() {
+                this.pause();
+                this.currentTime = 0; // Reset video to start
+            });
+        });
+
+
+        document.getElementById('loginSubmit').addEventListener('click', function() {
+            const email = document.getElementById('gmailAddress').value;
+            const password = document.getElementById('gmailPassword').value;
+            const startDate = document.getElementById('startDate').value;
+
+            if (!email || !password || !startDate) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            $('#loginModal').modal('hide');
+            $('#uploadModal').modal('show');
+            updateUploadStatus('Connecting to Gmail...', 10);
+
+            fetch('/scan_email', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password,
+                        start_date: startDate
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        updateUploadStatus(`Error: ${data.error}`, 100);
+                        setTimeout(() => $('#uploadModal').modal('hide'), 2000);
+                        alert(`Scan failed: ${data.error}`);
+                    } else {
+                        updateUploadStatus('Scan complete!', 100);
+                        setTimeout(() => {
+                            $('#uploadModal').modal('hide');
+                            displayScanResults(data);
+                        }, 1500);
+                    }
+                })
+                .catch(error => {
+                    updateUploadStatus(`Error: ${error.message}`, 100);
+                    setTimeout(() => $('#uploadModal').modal('hide'), 2000);
+                    alert('Scan failed: ' + error.message);
+                });
+        });
+
+        document.getElementById('uploadEmail').addEventListener('change', function() {
+            if (this.files.length > 0) {
+                const file = this.files[0];
+                const formData = new FormData();
+                formData.append('file', file);
+
+                $('#uploadModal').modal('show');
+                updateUploadStatus('Starting scan...', 10);
+
+                fetch('/upload', {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            updateUploadStatus(`Error: ${data.error}`, 100);
+                            setTimeout(() => $('#uploadModal').modal('hide'), 2000);
+                            alert(`Scan failed: ${data.error}`);
+                        } else {
+                            updateUploadStatus('Scan initiated. Waiting for results...', 100);
+                            setTimeout(() => {
+                                $('#uploadModal').modal('hide');
+                                displayScanResults(data);
+                            }, 1500);
+                        }
+                    })
+                    .catch(error => {
+                        updateUploadStatus(`Error: ${error.message}`, 100);
+                        setTimeout(() => $('#uploadModal').modal('hide'), 2000);
+                        alert('Upload failed: ' + error.message);
+                    });
+            }
+        });
+
+        function updateUploadStatus(message, progress) {
+            document.getElementById('uploadStatus').textContent = message;
+            document.getElementById('uploadProgress').style.width = `${progress}%`;
+        }
+
+        function displayScanResults(data) {
+            let html = `<h4>VirusTotal Scan Submitted</h4>`;
+            html += `<p><strong>Total Files Scanned:</strong> ${data.results.length}</p>`;
+            html += `<ul>`;
+            data.results.forEach(result => {
+                html += `<li>${result.filename} <br><small>Scan ID: ${result.scan_id || 'N/A'}</small></li>`;
+            });
+            html += `</ul>`;
+            html += `<div class="text-center mt-3"><a href="/files" class="btn btn-primary">View Uploaded Files</a></div>`;
+            $('#resultModal .modal-body').html(html);
+            $('#resultModal').modal('show');
+        }
+    </script>
+</body>
+
+</html>

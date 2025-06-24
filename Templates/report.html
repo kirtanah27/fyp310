@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>VirusTotal Report</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='report.css') }}">
+</head>
+<body>
+  <h2>VirusTotal Analysis Report</h2>
+  {% if report.data.attributes %}
+    <p>Status: <strong>{{ report.data.attributes.status }}</strong></p>
+    <p>Scan Results:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Engine</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for engine, result in report.data.attributes.results.items() %}
+          <tr>
+            <td>{{ engine }}</td>
+            <td>{{ result.result or "Clean" }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p>No detailed results found.</p>
+  {% endif %}
+</body>
+</html>

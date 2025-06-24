@@ -1,0 +1,260 @@
+body {
+    background: linear-gradient(-45deg, #494947, #a48ccf, #b6b6bb);
+    background-size: 400% 400%;
+    width: 100%;
+    height: 100vh;
+    animation: animate 15s ease infinite;
+    margin: 0%;
+    padding: 0%;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* =================================== */
+/* Theme Toggle Button & Dark Mode */
+/* =================================== */
+
+/* Style for the toggle button itself */
+.theme-toggle-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #343a40; /* Dark grey to match your theme */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: none;
+    transition: background-color 0.3s ease;
+}
+
+.theme-toggle-btn:hover {
+    background-color: #495057;
+}
+
+/* --- Dark Mode Styles --- */
+
+/* This class will be added to the body by JavaScript */
+body.dark-mode {
+    /* Override the animated gradient with a solid dark background */
+    background: #1e1e1e;
+    animation: none; /* Turn off animation in dark mode */
+    color: #e0e0e0;
+}
+
+body.dark-mode .jumbotron {
+    color: #f0f0f0;
+}
+
+/* Make modals dark */
+body.dark-mode .modal-content {
+    background-color: #2d2d2d;
+    color: #c0c0c0;
+}
+
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer {
+    border-color: #4a5568;
+}
+
+/* Ensure form labels are visible in dark mode modals */
+body.dark-mode .form-group label {
+    color: #e0e0e0;
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    color: white;
+    text-align: center;
+    height: 27%;
+}
+
+.jumbotron {
+    background-color: transparent;
+}
+
+.btn-primary {
+    background-color: #302f2f;
+    border-color: #302f2f;
+    color: white;
+}
+
+
+
+.container {
+    position: relative;
+    z-index: 2;
+}
+
+
+@keyframes rise {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.6;
+        /* Initial opacity */
+    }
+
+    50% {
+        opacity: 0.3;
+        /* Fade slightly mid-way */
+    }
+
+    100% {
+        transform: translateY(-120vh) scale(0.3);
+        opacity: 0;
+        /* Fade out completely */
+    }
+}
+
+.btn-green {
+    background-color: #302f2f;
+    color: white;
+}
+
+.btn-green:hover {
+    background-color: #218838;
+}
+
+.custom-position {
+    position: absolute;
+    top: 50px;
+    left: -310px;
+}
+
+.custom-button-position {
+    margin-top: -130px;
+}
+
+/* === NAVBAR/SIDEBAR STYLES - MODIFIED === */
+.side-collapse {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 250px;
+    background-color: #343a40;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 80px; /* Increased padding top for better spacing from top */
+    transform: translateX(-100%);
+    box-shadow: 2px 0 5px rgba(0,0,0,0.5); /* Add subtle shadow */
+}
+
+.side-collapse.show {
+    transform: translateX(0);
+}
+
+.side-collapse a {
+    padding: 15px 25px; /* Added more padding for better spacing */
+    text-decoration: none;
+    font-size: 18px; /* Slightly larger font */
+    color: rgb(238, 233, 233);
+    display: block; /* Ensure the whole padding area is clickable */
+    transition: 0.3s;
+    white-space: nowrap; /* Prevent text wrapping inside menu items */
+    overflow: hidden; /* Hide overflow if text is too long */
+    text-overflow: ellipsis; /* Add ellipsis for long text */
+}
+
+.side-collapse a:hover {
+    color: #f1f1f1; /* Lighter hover color */
+    background-color: #495057; /* Background on hover */
+}
+/* === END NAVBAR/SIDEBAR STYLES === */
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px; /* Adjusted right position */
+    font-size: 30px; /* Larger close button */
+    cursor: pointer;
+    color: rgb(238, 233, 233);
+    transition: 0.3s;
+}
+
+.close-btn:hover {
+    color: #f1f1f1;
+}
+
+
+.custom-modal-size {
+
+    max-width: 60%; 
+}
+
+.custom-modal-content {
+    height: 80vh;
+    overflow-y: auto;
+}
+
+.loading-spinner {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #28a745;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.email-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.email-icons {
+    display: flex;
+    gap: 10px;
+}
+
+.email-icons i {
+    cursor: pointer;
+}
+
+.view-logs-link {
+    color: #302f2f;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+@keyframes animate {
+    0% {
+        background-position: 0 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0 50%;
+    }
+}
+.report-form-container {
+    background-color: rgba(255, 255, 255, 0.9); /* White with slight transparency */
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
