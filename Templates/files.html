@@ -15,7 +15,7 @@
             --table-bg: #ffffff;
             --table-striped-bg: #f8f9fa;
             --table-hover-bg: #e9ecef;
-            --table-border-color: #dee2e6;
+            --table-border-color: #dee2e2;
             --table-text-color: #212529;
             --link-color: #007bff;
             --link-hover-color: #0056b3;
@@ -24,17 +24,16 @@
             --btn-primary-text: #ffffff;
             --btn-secondary-bg: #6c757d;
             --btn-secondary-border: #6c757d;
-            --btn-secondary-text: #ffffff; /* White */
+            --btn-secondary-text: #ffffff;
             --btn-info-bg: #17a2b8;
             --btn-info-border: #17a2b8;
-            --btn-info-text: #ffffff; /* White */
+            --btn-info-text: #ffffff;
             --btn-danger-bg: #dc3545;
             --btn-danger-border: #dc3545;
             --btn-danger-text: #ffffff;
             --input-bg: #fff;
             --input-border: #ced4da;
             --input-text: #495057;
-
             --theme-toggle-bg: #4CAF50;
             --theme-toggle-text: white;
             --theme-toggle-hover-bg: #45a049;
@@ -57,18 +56,17 @@
             --btn-primary-text: #ffffff;
             --btn-secondary-bg: #5a6268;
             --btn-secondary-border: #545b62;
-            --btn-secondary-text: #ffffff; /* White */
+            --btn-secondary-text: #ffffff;
             --btn-info-bg: #39acbe;
             --btn-info-border: #39acbe;
-            --btn-info-text: #ffffff; /* White */
+            --btn-info-text: #ffffff;
             --btn-danger-bg: #e44d5a;
             --btn-danger-border: #e44d5a;
             --btn-danger-text: #ffffff;
             --input-bg: #333;
             --input-border: #555;
             --input-text: #e0e0e0;
-
-            --theme-toggle-bg: #5a6678;
+            --theme-toggle-bg: #5a6268;
             --theme-toggle-text: #f0f0f0;
             --theme-toggle-hover-bg: #434c59;
         }
@@ -99,20 +97,20 @@
 
         .table-responsive-custom {
             display: block; width: 100%;
-            /* overflow-x: auto; We aim to avoid this, but it's a fallback if content is still too wide */
             -webkit-overflow-scrolling: touch;
         }
 
         .table {
             background-color: var(--table-bg); color: var(--table-text-color); border-color: var(--table-border-color); transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-            table-layout: fixed; /* Helps distribute width more predictably */
-            width: 100%; /* Ensure table tries to use full container width */
+            table-layout: fixed;
+            width: 100%;
         }
         .table th, .table td {
+            padding: 12px;
             border-color: var(--table-border-color); color: var(--table-text-color);
-            word-wrap: break-word; /* Fallback for overflow-wrap */
-            overflow-wrap: break-word; /* Allow long words to break and wrap */
-            white-space: normal; /* Ensure text wraps */
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            white-space: normal;
         }
         .table-striped tbody tr:nth-of-type(odd) { background-color: var(--table-striped-bg); }
         .table-hover tbody tr:hover { background-color: var(--table-hover-bg); color: var(--table-text-color); }
@@ -120,32 +118,12 @@
         .table a { color: var(--link-color); }
         .table a:hover { color: var(--link-hover-color); }
 
-        .btn-primary { background-color: var(--btn-primary-bg); border-color: var(--btn-primary-border); color: var(--btn-primary-text); }
-        .btn-secondary { background-color: var(--btn-secondary-bg); border-color: var(--btn-secondary-border); color: var(--btn-secondary-text); }
-        .btn-info { background-color: var(--btn-info-bg); border-color: var(--btn-info-border); color: var(--btn-info-text); }
-        .btn-danger { background-color: var(--btn-danger-bg); border-color: var(--btn-danger-border); color: var(--btn-danger-text); }
-
-        .table td a.btn-info { color: var(--btn-info-text) !important; }
-        .table td a.btn-secondary { color: var(--btn-secondary-text) !important; }
-
-        body.dark-mode .btn-primary:hover { background-color: #0b5ed7; border-color: #0a58ca; color: var(--btn-primary-text); }
-        body.dark-mode .btn-secondary:hover { background-color: #494f54; border-color: #43484d; color: var(--btn-secondary-text); }
-        body.dark-mode .btn-info:hover { background-color: #2d8ea0; border-color: #2a8293; color: var(--btn-info-text); }
-        body.dark-mode .btn-danger:hover { background-color: #c43e4a; border-color: #b83a44; color: var(--btn-danger-text); }
-
-        .btn-primary:hover, .btn-secondary:hover, .btn-info:hover, .btn-danger:hover {
-             /* Ensuring text color is maintained on hover for light mode too, if variables are set */
-            color: var(--btn-primary-text); /* This needs to be specific per button type if text color varies */
-        }
-        /* More specific hover text color for light mode: */
-        .btn-secondary:hover { color: var(--btn-secondary-text); }
-        .btn-info:hover { color: var(--btn-info-text); }
-
-
-        body.dark-mode input[type="checkbox"] { filter: invert(85%) hue-rotate(180deg); }
-        body.dark-mode input[type="checkbox"]:checked { filter: invert(60%) hue-rotate(180deg) brightness(1.2); }
-
-        h2 { color: var(--text-color); transition: color 0.3s ease; }
+        .scan-status { text-align: center; font-size: 1.2rem; }
+        .text-success { color: #28a745 !important; }
+        .text-danger { color: #dc3545 !important; }
+        .text-secondary { color: #6c757d !important; }
+        .text-warning { color: #ffc107 !important; }
+        .text-muted { color: #6c757d !important; }
 
         @media (min-width: 768px) {
             body { padding: 50px; padding-top: 70px; }
@@ -153,74 +131,9 @@
             .theme-toggle-btn { top: 20px; right: 20px; }
         }
 
-        /* === MODIFICATIONS FOR SMALL SCREENS TO FIT CONTENT === */
-        @media (max-width: 576px) {
-            .table th, .table td {
-                padding: 0.4rem 0.2rem; /* Reduced padding significantly (top/bottom LR) */
-                font-size: 0.75rem; /* Slightly smaller font */
-            }
-
-            /* Checkbox column can be narrower */
-            #multiDeleteForm .table thead th:first-child,
-            #multiDeleteForm .table tbody td:first-child {
-                width: 30px; /* Narrower checkbox column */
-                padding-left: 0.2rem;
-                padding-right: 0.2rem;
-            }
-             #multiDeleteForm .table thead th:first-child input[type="checkbox"] {
-                transform: scale(0.9); /* Make checkbox slightly smaller */
-            }
-            #multiDeleteForm .table tbody td:first-child input[type="checkbox"] {
-                transform: scale(0.9);
-            }
-
-
-            /* Filename column: allow it to break aggressively */
-            .table td:nth-child(2), .table th:nth-child(2) { /* Filename column */
-                word-break: break-all; /* Force break for long unbroken strings */
-                 /* Consider a max-width or allow it to take remaining space */
-            }
-
-            /* Columns with buttons: remove min-width, let them shrink */
-            .table th:nth-child(3), .table td:nth-child(3), /* VirusTotal Report */
-            .table th:nth-child(4), .table td:nth-child(4),  /* Email Header */
-            .table th:nth-child(5), .table td:nth-child(5) { /* Action */
-                min-width: auto; /* Remove minimum width constraint */
-            }
-
-            .table td .btn {
-                display: block; /* Buttons stack vertically within their cell */
-                width: 100%;
-                margin-bottom: 3px; /* Reduced margin */
-                white-space: normal; /* Crucial: Allow text in buttons to wrap */
-                line-height: 1.2;    /* Adjust line height for wrapped text */
-                font-size: 0.7rem;   /* Smaller font for buttons */
-                padding: 0.2rem 0.1rem; /* Smaller padding for buttons */
-            }
-            .table td .btn:last-child {
-                margin-bottom: 0;
-            }
-        }
-        /* Further adjustments for very narrow screens if necessary */
-        @media (max-width: 380px) {
-             .table th, .table td {
-                padding: 0.3rem 0.1rem;
-                font-size: 0.7rem;
-            }
-            #multiDeleteForm .table thead th:first-child,
-            #multiDeleteForm .table tbody td:first-child {
-                width: 25px;
-            }
-            .table td .btn {
-                font-size: 0.65rem;
-                padding: 0.15rem 0.1rem;
-            }
-        }
-
-
         #multiDeleteForm .table thead th:first-child,
         #multiDeleteForm .table tbody td:first-child {
-            width: 50px; text-align: center; /* Default for larger screens */
+            width: 50px; text-align: center;
         }
         #multiDeleteForm .table thead th { vertical-align: middle; }
 
@@ -234,6 +147,25 @@
 
     <div class="container container-custom">
         <h2 class="text-center mb-4">Uploaded Files</h2>
+        {% if user_email %}
+        <p class="text-center text-muted">Showing files for: <strong>{{ user_email }}</strong></p>
+        {% else %}
+        <p class="text-center text-muted">Showing all uploaded files (not associated with a specific email scan).</p>
+        {% endif %}
+        
+        <div class="d-flex justify-content-end mb-3">
+            <form action="{{ url_for('show_uploaded_files') }}" method="get" id="sortForm" class="form-inline">
+                <label for="sort" class="mr-2">Sort by:</label>
+                <select name="sort" id="sort" class="form-control form-control-sm">
+                    <option value="date_desc" {% if current_sort == 'date_desc' %}selected{% endif %}>Newest First</option>
+                    <option value="date_asc" {% if current_sort == 'date_asc' %}selected{% endif %}>Oldest First</option>
+                </select>
+                <!-- Hidden input to preserve user_email filter -->
+                {% if user_email %}
+                <input type="hidden" name="user_email" value="{{ user_email }}">
+                {% endif %}
+            </form>
+        </div>
         {% if files %}
         <form id="multiDeleteForm">
             <div class="table-responsive-custom mb-3">
@@ -242,6 +174,7 @@
                         <tr>
                             <th><input type="checkbox" id="selectAll" title="Select all files"></th>
                             <th>Filename</th>
+                            <th class="text-center">Status</th>
                             <th>VirusTotal Report</th>
                             <th>Email Header</th>
                             <th>Action</th>
@@ -249,9 +182,18 @@
                     </thead>
                     <tbody>
                         {% for file in files %}
-                        <tr>
+                        <tr data-filename="{{ file.filename }}">
                             <td><input type="checkbox" class="file-checkbox" value="{{ file.filename }}" title="Select {{ file.filename }}"></td>
                             <td>{{ file.filename }}</td>
+                            <td class="scan-status" data-initial-status="{{ file.status or 'pending' }}">
+                                {% if file.status == 'clean' %}
+                                    <i class="fas fa-check-circle text-success" title="Clean"></i>
+                                {% elif file.status == 'malicious' %}
+                                    <i class="fas fa-times-circle text-danger" title="Malicious"></i>
+                                {% else %}
+                                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                {% endif %}
+                            </td>
                             <td><a href="/report/{{ file.scan_id }}" class="btn btn-info btn-sm">View Report</a></td>
                             <td><a href="/header/{{ file.filename }}" class="btn btn-secondary btn-sm">View Header</a></td>
                             <td><button type="button" class="btn btn-danger btn-sm delete-btn" data-filename="{{ file.filename }}">Delete</button></td>
@@ -265,32 +207,48 @@
         {% else %}
             <p class="text-center">No files uploaded yet.</p>
         {% endif %}
-    </div>
+
+        {% if total_pages > 1 %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center mt-4">
+                <li class="page-item {% if current_page == 1 %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('show_uploaded_files', page=current_page - 1, sort=current_sort, user_email=user_email) }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                
+                <li class="page-item disabled">
+                    <span class="page-link">Page {{ current_page }} of {{ total_pages }}</span>
+                </li>
+
+                <li class="page-item {% if current_page == total_pages %}disabled{% endif %}">
+                    <a class="page-link" href="{{ url_for('show_uploaded_files', page=current_page + 1, sort=current_sort, user_email=user_email) }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        {% endif %}
+        </div>
 
     <script>
         $(document).ready(function() {
+            // --- Theme Toggle Logic ---
             const themeToggleBtn = $('#theme-toggle');
             const bodyElement = $('body');
 
-            function applyTheme(theme) { // theme can be 'dark-mode' or 'light-mode'
+            function applyTheme(theme) {
                 if (theme === 'dark-mode') {
                     bodyElement.addClass('dark-mode');
-                    themeToggleBtn.text('☀️'); // Sun icon for light mode
+                    themeToggleBtn.text('☀️');
                 } else {
                     bodyElement.removeClass('dark-mode');
-                    themeToggleBtn.text('🌓'); // Moon icon for dark mode
+                    themeToggleBtn.text('🌓');
                 }
                 localStorage.setItem('theme', theme);
             }
 
-            let preferredTheme = localStorage.getItem('theme');
-            if (!preferredTheme) { // If no theme saved, check system preference
-                if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                    preferredTheme = 'dark-mode';
-                } else {
-                    preferredTheme = 'light-mode'; // Default to light
-                }
-            }
+            let preferredTheme = localStorage.getItem('theme') || 'light-mode';
             applyTheme(preferredTheme);
 
             themeToggleBtn.on('click', () => {
@@ -298,7 +256,7 @@
                 applyTheme(newTheme);
             });
 
-            // Existing script for delete functionality
+            // --- File Deletion Logic ---
             $(document).on('click', '.delete-btn', function() {
                 const filename = $(this).data('filename');
                 if (confirm(`Are you sure you want to delete ${filename}?`)) {
@@ -346,6 +304,45 @@
                     }
                 })
                 .catch(() => alert('An error occurred while deleting selected files.'));
+            });
+
+
+            // --- NEW: Scan Status Check Logic with Caching ---
+            $('.scan-status').each(function() {
+                const statusCell = $(this);
+                const initialStatus = statusCell.data('initial-status');
+
+                // Only make a request if the status is 'pending'
+                if (initialStatus === 'pending') {
+                    const filename = statusCell.closest('tr').data('filename');
+
+                    if (filename) {
+                        fetch(`/check_status/${filename}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                let iconHtml = '';
+                                if (data.status === 'malicious') {
+                                    iconHtml = '<i class="fas fa-times-circle text-danger" title="Malicious"></i>';
+                                } else if (data.status === 'clean') {
+                                    iconHtml = '<i class="fas fa-check-circle text-success" title="Clean"></i>';
+                                } else if (data.status === 'pending') {
+                                    iconHtml = '<i class="fas fa-question-circle text-secondary" title="Scan is still pending..."></i>';
+                                } else {
+                                    iconHtml = '<i class="fas fa-exclamation-circle text-warning" title="Error checking status"></i>';
+                                }
+                                statusCell.html(iconHtml);
+                            })
+                            .catch(() => {
+                                const iconHtml = '<i class="fas fa-exclamation-circle text-warning" title="Error fetching status"></i>';
+                                statusCell.html(iconHtml);
+                            });
+                    }
+                }
+            });
+            
+            // --- JAVASCRIPT FOR SORTING DROPDOWN ---
+            $('#sort').on('change', function() {
+                $('#sortForm').submit();
             });
         });
     </script>

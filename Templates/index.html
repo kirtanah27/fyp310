@@ -11,6 +11,33 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <style>
+        /* Keeping the disabled-link style, but not applying it via JS to make links clickable */
+        .disabled-link {
+            opacity: 0.8;
+        }
+
+        /* Spinner CSS */
+        .spinner-border-small {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            vertical-align: -0.125em;
+            border: 0.15em solid currentColor;
+            border-right-color: transparent;
+            border-radius: 50%;
+            -webkit-animation: .75s linear infinite spinner-border;
+            animation: .75s linear infinite spinner-border;
+        }
+
+        @-webkit-keyframes spinner-border {
+            to { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+        }
+
+        @keyframes spinner-border {
+            to { -webkit-transform: rotate(360deg); transform: rotate(360deg); }
+        }
+    </style>
 </head>
 
 <body>
@@ -29,7 +56,7 @@
             <a href="#" class="text-white d-block" data-toggle="modal" data-target="#exampleModal" data-title="How to Upload Email"
                data-content='<div class="row justify-content-center"><div class="col-md-10"><div class="embed-responsive embed-responsive-16by9"><video id="uploadEmailVideo" class="embed-responsive-item" controls preload="metadata"><source src="{{ url_for("static", filename="videos/video guideline.mp4") }}" type="video/mp4">Your browser does not support the video tag.</video></div></div></div>'>How to Upload Email</a>
             <a href="#" class="text-white d-block" data-toggle="modal" data-target="#exampleModal" data-title="Forensic Log Guide"
-               data-content='<div class="row justify-content-center"><div class="col-md-10"><div class="embed-responsive embed-responsive-16by9"><video id="forensicLogVideo" class="embed-responsive-item" controls preload="metadata"><source src="{{ url_for("static", filename="videos/video guideline.mp4") }}" type="video/mp4">Your browser does not support the video tag.</video></div></div></div>'>Forensic Log Guide</a>
+               data-content='<div class="text-left"><h3>Understanding the Forensic Log (Email Headers)</h3><p>When you click "View Header" on a file, you are looking at the "digital passport" of an email. It shows every step the email took to get to you. Here’s what the most important fields mean in simple terms:</p><hr><h4><strong>From</strong></h4><ul><li><strong>What it is:</strong> The sender&#39;s name and email address as they appear in the email.</li><li><strong>Can it be faked?</strong> Yes, very easily. This is a common tactic in phishing emails, so always be suspicious if it looks like it&#39;s from a trusted source but the message is unusual.</li></ul><hr><h4><strong>To</strong></h4><ul><li><strong>What it is:</strong> The recipient&#39;s email address (usually yours).</li><li><strong>Why it matters:</strong> Confirms that you were the intended recipient.</li></ul><hr><h4><strong>Subject</strong></h4><ul><li><strong>What it is:</b> The title of the email.</li><li><strong>What to look for:</b> Phishing emails often use urgent or alarming subjects like "Action Required" or "Your Account is Suspended" to make you act without thinking.</li></ul><hr><h4><strong>Date</strong></h4><ul><li><strong>What it is:</strong> The date and time the email was sent.</li><li><strong>Why it matters:</b> Helps you place the email in a timeline. If you receive a strange password reset email at 3 AM when you were asleep, it’s a major red flag.</li></ul><hr><h4><strong>Received</strong></h4><ul><li><strong>What it is:</strong> This is the most important part for forensics. There are usually several "Received" lines. Each one represents a server that the email passed through on its journey. You read them from <strong>bottom to top</strong>.</li><li><strong>The Bottom-most &#39;Received&#39; line:</strong> Shows the original server that sent the email. This is the most trustworthy piece of information for identifying the true origin.</li><li><strong>IP Address:</strong> Look for an IP address (e.g., <code>123.45.67.89</code>) in the &#39;Received&#39; lines. This is the unique address of the server. Our tool automatically finds this IP and shows you its approximate location, which can help you spot a scam. For example, if an email claims to be from your local bank but the IP address is from another country, it is likely a phishing attempt.</li></ul><hr><h4><strong>Message-ID</strong></h4><ul><li><strong>What it is:</strong> A unique tracking number assigned to every email when it&#39;s created.</li><li><strong>Why it matters:</strong> Every email has a one-of-a-kind ID. No two emails should ever have the same one.</li></ul><p>By understanding these fields, you can better identify suspicious emails and protect yourself from phishing attacks.</p></div>'>Forensic Log Guide</a>
             <a href="#" class="text-white d-block" data-toggle="modal" data-target="#exampleModal" data-title="How to Get App Password"
                data-content='<div class="row justify-content-center"><div class="col-md-10"><div class="embed-responsive embed-responsive-16by9"><video id="appPasswordVideo" class="embed-responsive-item" controls preload="metadata"><source src="{{ url_for("static", filename="videos/video guideline.mp4") }}" type="video/mp4">Your browser does not support the video tag.</video></div></div></div>'>How to Get App Password</a>
         </div>
@@ -40,11 +67,10 @@
 
         <div class="d-flex justify-content-center custom-button-position flex-wrap">
             <a href="#" class="btn btn-green mx-2 mb-2" role="button" data-toggle="modal" data-target="#loginModal">Scan Email</a>
-            <label class="btn btn-danger mx-2 mb-2">
+            <button class="btn btn-danger mx-2 mb-2" id="uploadEmailBtn">
                 Upload Email
-                <input type="file" id="uploadEmail" hidden accept=".eml">
-            </label>
-            <a href="/files" class="btn btn-secondary mx-2 mb-2">
+            </button>
+            <a href="#" class="btn btn-secondary mx-2 mb-2" id="viewFilesLink">
                 <i class="fas fa-folder-open"></i> View Uploaded Files
             </a>
         </div>
@@ -76,11 +102,60 @@
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="loginSubmit">Scan Email</button>
+                    <button type="button" class="btn btn-primary" id="proceedWithLogin">Proceed</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="userLoginModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="userLoginModalTitle">Enter Your Email</h5>
+                </div>
+                <div class="modal-body">
+                    <form id="userLoginForm">
+                        <div class="form-group">
+                            <label>Your Email Address</label>
+                            <input type="email" class="form-control" id="userEmailInput" required>
+                        </div>
+                        <div class="form-group" id="appPasswordGroup">
+                            <label>App Password</label>
+                            <input type="password" class="form-control" id="userAppPasswordInput" required>
+                            <small class="text-muted" id="userAppPasswordHelpText">
+                                <a href="https://myaccount.google.com/apppasswords" target="_blank">Create App Password</a>
+                            </small>
+                        </div>
+                        <div class="form-group" id="uploadFileGroup" style="display: none;">
+                            <label for="uploadEmailInputUnified">Select .eml File</label>
+                            <input type="file" class="form-control-file" id="uploadEmailInputUnified" accept=".eml">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="submitUserEmail">Proceed</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="choiceModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">What would you like to do?</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p class="mb-4">You are logged in as <strong id="loggedInUserEmail"></strong>.</p>
+                    <button type="button" class="btn btn-green btn-lg btn-block mb-3" id="scanEmailsNow">Scan Emails</button>
+                    <button type="button" class="btn btn-secondary btn-lg btn-block" id="viewMyFiles">View My Uploaded Files</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="modal fade" id="uploadModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
@@ -138,7 +213,7 @@
                     <h6 class="text-uppercase font-weight-bold">Quick Links</h6>
                     <ul class="list-unstyled">
                         <li><a href="/" class="text-light">Home</a></li>
-                        <li><a href="/files" class="text-light">View Uploaded Files</a></li>
+                        <li><a href="/files" class="text-light" id="footerViewFilesLink">View Uploaded Files</a></li>
                         <li><a href="#" class="text-light" data-toggle="modal" data-target="#loginModal">Scan Email</a></li>
                         <li><a href="https://myaccount.google.com/apppasswords" class="text-light" target="_blank">Get App Password</a></li>
                     </ul>
@@ -146,9 +221,8 @@
                 <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
                     <h6 class="text-uppercase font-weight-bold">Support</h6>
                     <ul class="list-unstyled">
-                        <!-- Updated Contact Us link -->
                         <li><a href="https://wa.me/60123456789?text=Hello,%20I%20need%20help%20with%20the%20Anti-Phishing%20service." class="text-light" target="_blank">Contact Us</a></li>
-                        <li><a href="/report" class="text-light">Report a Problem</a></li>
+                        <li><a href="/feedback_form" class="text-light">Report a Problem</a></li>
                         <li><a href="/privacy" class="text-light">Privacy Policy</a></li>
                     </ul>
                 </div>
@@ -195,7 +269,338 @@
                 applyTheme(newTheme);
                 localStorage.setItem('theme', newTheme);
             });
+
+            // Store the currently used email in session storage
+            function setUserEmail(email) {
+                if (email) {
+                    sessionStorage.setItem('currentGmailUser', email);
+                } else {
+                    sessionStorage.removeItem('currentGmailUser');
+                }
+                // Update display and links immediately after setting/clearing user
+                updateLoggedInUserDisplay();
+                updateViewFilesLinks();
+            }
+
+            // Get the currently used email from session storage
+            function getUserEmail() {
+                return sessionStorage.getItem('currentGmailUser');
+            }
+
+            // Function to update the displayed logged-in user email in choiceModal
+            function updateLoggedInUserDisplay() {
+                const userEmail = getUserEmail();
+                if (userEmail) {
+                    $('#loggedInUserEmail').text(userEmail);
+                }
+            }
+            // Call on load to set initial display if user already logged in from previous session
+            updateLoggedInUserDisplay();
+
+
+            // Update "View Uploaded Files" links dynamically
+            function updateViewFilesLinks() {
+                const userEmail = getUserEmail();
+                const viewFilesLink = document.getElementById('viewFilesLink');
+                const footerViewFilesLink = document.getElementById('footerViewFilesLink');
+
+                // Always set href for the "View Uploaded Files" links
+                const defaultFilesUrl = '/files'; // Default URL if no user email
+                const userSpecificFilesUrl = userEmail ? `/files?user_email=${encodeURIComponent(userEmail)}` : defaultFilesUrl;
+
+                if (viewFilesLink) {
+                    viewFilesLink.href = userSpecificFilesUrl;
+                    viewFilesLink.classList.remove('disabled-link'); // Ensure it's not visually disabled
+                }
+                if (footerViewFilesLink) {
+                    footerViewFilesLink.href = userSpecificFilesUrl;
+                    footerViewFilesLink.classList.remove('disabled-link'); // Ensure it's not visually disabled
+                }
+            }
+
+            // Initial update of links when page loads
+            updateViewFilesLinks();
+
+            let storedEmail = '';
+            let storedPassword = '';
+            let storedStartDate = '';
+
+            // --- Loading Animation Functions ---
+            function showLoading(buttonId, originalText) {
+                const button = $(`#${buttonId}`);
+                button.data('original-text', originalText); // Store original text
+                button.prop('disabled', true);
+                button.html(`<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Processing...`);
+            }
+
+            function hideLoading(buttonId) {
+                const button = $(`#${buttonId}`);
+                const originalText = button.data('original-text');
+                button.prop('disabled', false);
+                button.html(originalText);
+            }
+
+            // Event listener for "Proceed" button in loginModal
+            document.getElementById('proceedWithLogin').addEventListener('click', function() {
+                const email = document.getElementById('gmailAddress').value;
+                const password = document.getElementById('gmailPassword').value;
+                const startDate = document.getElementById('startDate').value;
+
+                if (!email || !password || !startDate) {
+                    alert('Please fill in all fields.');
+                    return;
+                }
+
+                storedEmail = email;
+                storedPassword = password;
+                storedStartDate = startDate;
+
+                showLoading('proceedWithLogin', 'Proceed'); // Show loading
+
+                // Authenticate with backend before proceeding
+                fetch('/verify_credentials', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: storedEmail, app_password: storedPassword })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    hideLoading('proceedWithLogin'); // Hide loading
+                    if (data.success) {
+                        setUserEmail(storedEmail); // Set session user
+                        updateViewFilesLinks(); // Update links
+                        $('#loginModal').modal('hide'); // Hide login modal
+                        $('#loggedInUserEmail').text(storedEmail); // Set email in choice modal
+                        $('#choiceModal').modal('show'); // Show choice modal
+                    } else {
+                        alert(`Authentication failed: ${data.message}`);
+                    }
+                })
+                .catch(error => {
+                    hideLoading('proceedWithLogin'); // Hide loading
+                    alert(`An error occurred during authentication: ${error.message}`);
+                    console.error('Authentication error:', error);
+                });
+            });
+
+            // Event listener for "Scan Emails" button in choiceModal
+            document.getElementById('scanEmailsNow').addEventListener('click', function() {
+                $('#choiceModal').modal('hide'); // Hide choice modal
+                $('#uploadModal').modal('show'); // Show upload progress modal
+                updateUploadStatus('Connecting to Gmail...', 10);
+
+                showLoading('scanEmailsNow', 'Scan Emails'); // Show loading
+
+                fetch('/scan_email', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            email: storedEmail,
+                            password: storedPassword,
+                            start_date: storedStartDate
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        hideLoading('scanEmailsNow'); // Hide loading
+                        if (data.error) {
+                            updateUploadStatus(`Error: ${data.error}`, 100);
+                            setTimeout(() => $('#uploadModal').modal('hide'), 2000);
+                            alert(`Scan failed: ${data.error}`);
+                        } else {
+                            updateUploadStatus('Scan complete!', 100);
+                            setTimeout(() => {
+                                $('#uploadModal').modal('hide');
+                                displayScanResults(data);
+                            }, 1500);
+                        }
+                    })
+                    .catch(error => {
+                        hideLoading('scanEmailsNow'); // Hide loading
+                        updateUploadStatus(`Error: ${error.message}`, 100);
+                        setTimeout(() => $('#uploadModal').modal('hide'), 2000);
+                        alert('Scan failed: ' + error.message);
+                    });
+            });
+
+            // Event listener for "View My Uploaded Files" button in choiceModal
+            document.getElementById('viewMyFiles').addEventListener('click', function() {
+                showLoading('viewMyFiles', 'View My Uploaded Files'); // Show loading briefly
+                // No need to hide loading explicitly as it's a redirect.
+                $('#choiceModal').modal('hide'); // Hide choice modal
+                // Directly redirect to files.html with the stored email
+                window.location.href = `/files?user_email=${encodeURIComponent(storedEmail)}`;
+            });
+
+
+            // Unified login for Upload Email & View Uploaded Files
+            function showUnifiedLoginModal(action) {
+                // Clear inputs for fresh entry
+                $('#userEmailInput').val('');
+                $('#userAppPasswordInput').val('');
+                $('#uploadEmailInputUnified').val(''); // Clear file input as well
+                
+                $('#userLoginModalTitle').text('Enter Email & App Password');
+                $('#userAppPasswordInput').prop('required', true); // App password is always required
+                $('#userAppPasswordHelpText').html('<a href="https://myaccount.google.com/apppasswords" target="_blank">Create App Password</a>');
+                
+                // Show/hide file input based on action
+                if (action === 'upload') {
+                    $('#uploadFileGroup').show();
+                    // Set accept attribute to .eml for file input
+                    $('#uploadEmailInputUnified').attr('accept', '.eml').prop('required', true);
+                } else {
+                    $('#uploadFileGroup').hide();
+                    $('#uploadEmailInputUnified').removeAttr('accept').prop('required', false);
+                }
+
+                $('#userLoginModal').modal('show');
+                $('#submitUserEmail').data('action', action); // Store intent
+            }
+
+            // Event listener for "Upload Email" button
+            $('#uploadEmailBtn').on('click', function() {
+                showUnifiedLoginModal('upload');
+            });
+
+            // Event listener for "View Uploaded Files" buttons
+            $('#viewFilesLink, #footerViewFilesLink').on('click', function(e) {
+                e.preventDefault(); // Prevent default link navigation
+                showUnifiedLoginModal('viewFiles');
+            });
+
+            // Event listener for "Proceed" button in the unified userLoginModal
+            $('#submitUserEmail').on('click', function() {
+                const email = $('#userEmailInput').val();
+                const appPassword = $('#userAppPasswordInput').val(); // Get app password
+                const fileInput = document.getElementById('uploadEmailInputUnified');
+                const file = fileInput ? fileInput.files[0] : null;
+
+                const action = $('#submitUserEmail').data('action');
+
+                // Basic validation for email and app password
+                if (!email || !appPassword) {
+                    alert('Please fill in all email and app password fields.');
+                    return;
+                }
+
+                if (action === 'upload' && !file) {
+                    alert('Please select an .eml file to upload.');
+                    return;
+                }
+                
+                // Additional client-side check for .eml extension
+                if (action === 'upload' && file && !file.name.toLowerCase().endsWith('.eml')) {
+                    alert('Please upload a file with a .eml extension.');
+                    $('#uploadEmailInputUnified').val(''); // Clear the selected file
+                    return;
+                }
+
+                showLoading('submitUserEmail', 'Proceed'); // Show loading
+
+                // Perform backend authentication for Upload Email/View Files
+                fetch('/verify_credentials', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, app_password: appPassword })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        setUserEmail(email); // Set this email as the current session user
+                        $('#userLoginModal').modal('hide'); // Hide the modal
+
+                        if (action === 'upload') {
+                            const formData = new FormData();
+                            formData.append('file', file);
+                            formData.append('user_email', email); // Associate the file with this email
+
+                            $('#uploadModal').modal('show');
+                            updateUploadStatus('Starting upload and scan...', 10);
+
+                            // No need to hide submitUserEmail loading here, as uploadModal takes over.
+                            // The user will see the progress bar.
+                            fetch('/upload', {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    hideLoading('submitUserEmail'); // Hide loading if still active (e.g., if uploadModal doesn't take over fast enough)
+                                    if (data.error) {
+                                        updateUploadStatus(`Error: ${data.error}`, 100);
+                                        setTimeout(() => $('#uploadModal').modal('hide'), 2000);
+                                        alert(`Upload failed: ${data.error}`);
+                                    } else {
+                                        updateUploadStatus('Upload initiated. Waiting for results...', 100);
+                                        setTimeout(() => {
+                                            $('#uploadModal').modal('hide');
+                                            displayScanResults(data);
+                                        }, 1500);
+                                    }
+                                })
+                                .catch(error => {
+                                    hideLoading('submitUserEmail'); // Hide loading
+                                    updateUploadStatus(`Error: ${error.message}`, 100);
+                                    setTimeout(() => $('#uploadModal').modal('hide'), 2000);
+                                    alert('Upload failed: ' + error.message);
+                                });
+                        } else if (action === 'viewFiles') {
+                            hideLoading('submitUserEmail'); // Hide loading
+                            // Redirect to files.html with the entered email
+                            window.location.href = `/files?user_email=${encodeURIComponent(email)}`;
+                        }
+                    } else {
+                        hideLoading('submitUserEmail'); // Hide loading
+                        alert(`Authentication failed: ${data.message}`);
+                    }
+                })
+                .catch(error => {
+                    hideLoading('submitUserEmail'); // Hide loading
+                    alert(`An error occurred during authentication: ${error.message}`);
+                    console.error('Authentication error:', error);
+                });
+            });
+
+            function updateUploadStatus(message, progress) {
+                document.getElementById('uploadStatus').textContent = message;
+                document.getElementById('uploadProgress').style.width = `${progress}%`;
+            }
+
+            function displayScanResults(data) {
+                let html = `<h4>VirusTotal Scan Submitted</h4>`;
+                html += `<p><strong>Total Files Scanned:</strong> ${data.results ? data.results.length : 1}</p>`; // Adjust for single upload vs multiple scan results
+                html += `<ul>`;
+                if (data.results) { // From scan_email
+                    data.results.forEach(result => {
+                        html += `<li>${result.filename} <br><small>Scan ID: ${result.scan_id || 'N/A'}</small></li>`;
+                    });
+                } else { // From manual upload
+                    html += `<li>${data.filename} <br><small>Scan ID: ${data.scan_id || 'N/A'}</small></li>`;
+                }
+                html += `</ul>`;
+
+                const userEmail = getUserEmail(); // Get current session email
+                const filesUrl = userEmail ? `/files?user_email=${encodeURIComponent(userEmail)}` : `/files`;
+                html += `<div class="text-center mt-3"><a href="${filesUrl}" class="btn btn-primary">View My Uploaded Files</a></div>`;
+                
+                $('#resultModal .modal-body').html(html);
+                $('#resultModal').modal('show');
+
+                updateViewFilesLinks(); // Ensure links are updated after showing results
+            }
+
+            // Event listener for opening the Gmail login modal
+            $('#loginModal').on('show.bs.modal', function() {
+                // Clear the Gmail-specific fields when modal opens
+                $('#gmailAddress').val('');
+                $('#gmailPassword').val('');
+                $('#startDate').val('');
+            });
         });
+
         /* END: Theme Toggle JavaScript */
         function toggleMenu() {
             document.getElementById("sideMenu").classList.toggle("show");
@@ -224,105 +629,6 @@
             });
         });
 
-
-        document.getElementById('loginSubmit').addEventListener('click', function() {
-            const email = document.getElementById('gmailAddress').value;
-            const password = document.getElementById('gmailPassword').value;
-            const startDate = document.getElementById('startDate').value;
-
-            if (!email || !password || !startDate) {
-                alert('Please fill in all fields.');
-                return;
-            }
-
-            $('#loginModal').modal('hide');
-            $('#uploadModal').modal('show');
-            updateUploadStatus('Connecting to Gmail...', 10);
-
-            fetch('/scan_email', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password,
-                        start_date: startDate
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        updateUploadStatus(`Error: ${data.error}`, 100);
-                        setTimeout(() => $('#uploadModal').modal('hide'), 2000);
-                        alert(`Scan failed: ${data.error}`);
-                    } else {
-                        updateUploadStatus('Scan complete!', 100);
-                        setTimeout(() => {
-                            $('#uploadModal').modal('hide');
-                            displayScanResults(data);
-                        }, 1500);
-                    }
-                })
-                .catch(error => {
-                    updateUploadStatus(`Error: ${error.message}`, 100);
-                    setTimeout(() => $('#uploadModal').modal('hide'), 2000);
-                    alert('Scan failed: ' + error.message);
-                });
-        });
-
-        document.getElementById('uploadEmail').addEventListener('change', function() {
-            if (this.files.length > 0) {
-                const file = this.files[0];
-                const formData = new FormData();
-                formData.append('file', file);
-
-                $('#uploadModal').modal('show');
-                updateUploadStatus('Starting scan...', 10);
-
-                fetch('/upload', {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.error) {
-                            updateUploadStatus(`Error: ${data.error}`, 100);
-                            setTimeout(() => $('#uploadModal').modal('hide'), 2000);
-                            alert(`Scan failed: ${data.error}`);
-                        } else {
-                            updateUploadStatus('Scan initiated. Waiting for results...', 100);
-                            setTimeout(() => {
-                                $('#uploadModal').modal('hide');
-                                displayScanResults(data);
-                            }, 1500);
-                        }
-                    })
-                    .catch(error => {
-                        updateUploadStatus(`Error: ${error.message}`, 100);
-                        setTimeout(() => $('#uploadModal').modal('hide'), 2000);
-                        alert('Upload failed: ' + error.message);
-                    });
-            }
-        });
-
-        function updateUploadStatus(message, progress) {
-            document.getElementById('uploadStatus').textContent = message;
-            document.getElementById('uploadProgress').style.width = `${progress}%`;
-        }
-
-        function displayScanResults(data) {
-            let html = `<h4>VirusTotal Scan Submitted</h4>`;
-            html += `<p><strong>Total Files Scanned:</strong> ${data.results.length}</p>`;
-            html += `<ul>`;
-            data.results.forEach(result => {
-                html += `<li>${result.filename} <br><small>Scan ID: ${result.scan_id || 'N/A'}</small></li>`;
-            });
-            html += `</ul>`;
-            html += `<div class="text-center mt-3"><a href="/files" class="btn btn-primary">View Uploaded Files</a></div>`;
-            $('#resultModal .modal-body').html(html);
-            $('#resultModal').modal('show');
-        }
     </script>
 </body>
 
